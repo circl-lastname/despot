@@ -14,7 +14,7 @@ let output = {};
 let processedFiles = 0;
 let importedPictures = 0;
 
-for (file of metadata) {
+for (let file of metadata) {
   if (!file.MIMEType.startsWith("audio/")) {
     console.log(`Skipped non audio file ${file.SourceFile}`);
     continue;
@@ -54,7 +54,7 @@ for (file of metadata) {
   output[artist][album][trackNumber] = {
     title: title,
     file: `${file.SourceFile}`,
-    picture: pictureHash !== "" ? `pictures/${pictureHash}` : null,
+    picture: pictureHash !== "" ? `pictures/${pictureHash}` : "pictures/no-picture.svg",
   };
   
   processedFiles++;
