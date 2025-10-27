@@ -69,6 +69,13 @@ for (let file of metadata) {
   processedFiles++;
 }
 
+// Remove sparse arrays
+for (let artist in output) {
+  for (let album in output[artist]) {
+    output[artist][album] = output[artist][album].filter(() => true);
+  }
+}
+
 writeFileSync("info.json", JSON.stringify(output));
 
 console.log(`Processed ${processedFiles} files, imported ${importedPictures} pictures.`);
