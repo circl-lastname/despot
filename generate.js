@@ -1,19 +1,27 @@
 #!/usr/bin/env node
 
-const { chdir } = require("node:process")
+const { chdir, exit } = require("node:process")
 const { execFileSync } = require("node:child_process");
 const { createHash } = require("node:crypto");
-const { existsSync, writeFileSync, readFileSync } = require("node:fs");
+const { existsSync, writeFileSync, readFileSync, unlinkSync } = require("node:fs");
 
 console.log("Running exiftool...");
 
 chdir(__dirname);
-const metadata = JSON.parse(execFileSync("exiftool", [ "-r", "-j", "music" ], { encoding: "utf-8" }));
+
+let metadata;
+try {
+  metadata = JSON.parse(execFileSync("exiftool", [ "-r", "-j", "music" ], { encoding: "utf-8" }));
+} catch {
+  console.log("Failed to parse exiftool output, your music directory is likely empty.");
+  exit();
+}
 
 let oldOutput = {};
 let output = {};
 let processedFiles = 0;
 let importedPictures = 0;
+let noTrackNumber = "";
 
 if (existsSync("info.json")) {
   oldOutput = JSON.parse(readFileSync("info.json", "utf-8"));
@@ -37,7 +45,17 @@ for (let file of metadata) {
     output[artist][album] = [];
   }
   
-  const trackNumber = file.TrackNumber ? parseInt(file.TrackNumber)-1 : (file.Track ? parseInt(file.Track)-1 : output[artist][album].length);
+  let trackNumber = file.TrackNumber ? parseInt(file.TrackNumber)-1 : (file.Track ? parseInt(file.Track)-1 : output[artist][album].length);
+  
+  if (file.TrackNumber) {
+    trackNumber = parseInt(file.TrackNumber)-1;
+  } else if (file.Track) {
+    trackNumber = parseInt(file.Track)-1;
+  } else {
+    console.log(`File ${file.SourceFile} has no track number, please edit the metadata`);
+    noTrackNumber += `${file.SourceFile}\n`;
+    trackNumber = output[artist][album].length;
+  }
   
   let picturePath = "";
   
@@ -63,7 +81,7 @@ for (let file of metadata) {
   output[artist][album][trackNumber] = {
     title: title,
     file: file.SourceFile,
-    picture: picturePath !== "" ? picturePath : "pictures/no-picture.svg",
+    picture: picturePath !== "" ? picturePath : "assets/no-picture.svg",
   };
   
   processedFiles++;
@@ -78,4 +96,14 @@ for (let artist in output) {
 
 writeFileSync("info.json", JSON.stringify(output));
 
-console.log(`Processed ${processedFiles} files, imported ${importedPictures} pictures.`);
+if (noTrackNumber) {
+  writeFileSync("no-track-number.txt", noTrackNumber);
+} else if (existsSync("no-track-number.txt")) {
+  unlinkSync("no-track-number.txt");
+}
+
+console.log(`\nProcessed ${processedFiles} files, imported ${importedPictures} pictures.`);
+
+if (noTrackNumber) {
+  console.log("Files without track numbers have been written to no-track-number.txt");
+}

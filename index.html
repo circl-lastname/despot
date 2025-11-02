@@ -2,12 +2,33 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <script src="splayer.js" defer></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="style.css">
+    <script src="main.js" defer></script>
     <title>despot</title>
   </head>
   <body>
-    <h1>despot (simple player)</h1>
-    <hr>
-    <main></main>
+    <div id="idMain" class="main">
+      <div class="player">
+        <div class="controls">
+          <img id="idPicture" class="picture" src="assets/no-picture.svg" width="284">
+          <div id="idTitle" class="title">&nbsp;</div>
+          <div id="idArtist" class="artist">&nbsp;</div>
+          <div class="progress"><input id="idProgress" type="range" min="0" max="0" step="0.001"></div>
+          <div class="buttonDiv">
+            <button id="idPreviousButton"><img src="assets/previous.svg" draggable="false"></button>
+            <button id="idPlayButton"><img src="assets/play.svg" draggable="false"></button>
+            <button id="idNextButton"><img src="assets/next.svg" draggable="false"></button>
+            <!--<button id="idShuffleButton"><img src="assets/shuffle.svg" draggable="false"></button>-->
+            <button id="idRemoveAllButton"><img src="assets/remove-all.svg" draggable="false"></button>
+          </div>
+        </div>
+        <div id="idQueue" class="queue"></div>
+      </div>
+      <div class="showButtonDiv">
+        <button id="idShowButton"><img src="assets/left.svg" draggable="false"></button>
+      </div>
+      <div id="idBrowser" class="browser"></div>
+    </div>
   </body>
 </html>
