@@ -12,9 +12,13 @@ chdir(__dirname);
 let metadata;
 try {
   metadata = JSON.parse(execFileSync("exiftool", [ "-r", "-j", "music" ], { encoding: "utf-8" }));
-} catch {
-  console.log("Failed to parse exiftool output, your music directory is likely empty.");
-  exit();
+} catch (err) {
+  try {
+    metadata = JSON.parse(err.stdout);
+  } catch {
+    console.log("Failed to parse exiftool output, your music directory is likely empty.");
+    exit();
+  }
 }
 
 let oldOutput = {};
@@ -28,7 +32,7 @@ if (existsSync("info.json")) {
 }
 
 for (let file of metadata) {
-  if (!file.MIMEType.startsWith("audio/")) {
+  if (!file.MIMEType?.startsWith("audio/")) {
     console.log(`Skipped non audio file ${file.SourceFile}`);
     continue;
   }
