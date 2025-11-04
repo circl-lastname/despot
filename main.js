@@ -98,6 +98,9 @@ async function load() {
   idNextButton.addEventListener("click", next);
   idRemoveAllButton.addEventListener("click", removeAllFromQueue);
   
+  navigator.mediaSession.setActionHandler("previoustrack", previous);
+  navigator.mediaSession.setActionHandler("nexttrack", next);
+  
   displayAlbums();
 }
 
@@ -130,6 +133,8 @@ function stop() {
   idProgress.max = 0;
   idProgress.value = 0;
   idPlayButton.firstChild.src = "assets/play.svg";
+  
+  navigator.mediaSession.metadata = null;
   
   if (currentAudio) {
     currentAudio.pause();
@@ -267,6 +272,16 @@ function playTrack(queueTrack, autoscroll) {
   idTitle.innerText = toPlayInfo.title;
   idArtist.innerText = toPlay.despot.artist;
   idProgress.value = 0;
+  
+  // Tell the browser what's playing
+  navigator.mediaSession.metadata = new MediaMetadata({
+    album: toPlay.despot.album,
+    artist: toPlay.despot.artist,
+    title: toPlayInfo.title,
+    artwork: [{
+      src: toPlayInfo.picture
+    }]
+  });
   
   // Scroll the queue, if the user hasn't scrolled, if requested
   if (autoscroll) {
