@@ -1,0 +1,96 @@
+#!/bin/sh
+set -e
+
+install_files=""
+build_config="${1:-Release}"
+
+BuildRule() {
+cat << EOF >> build.ninja
+rule compile_$1
+  command = $CC \$in -c $BIN_CFLAGS $2 -MD -MF \$out.d -o \$out
+  depfile = \$out.d
+  description = Compiling \$out
+rule link_$1
+  command = $CC \$in $BIN_LDFLAGS $3 -o \$out
+  description = Linking \$out
+EOF
+}
+
+LibraryBuildRule() {
+cat << EOF >> build.ninja
+rule compile_$1
+  command = $CC \$in -c $LIB_CFLAGS $2 -MD -MF \$out.d -o \$out
+  depfile = \$out.d
+  description = Compiling \$out
+rule link_$1
+  command = $CC \$in $LIB_LDFLAGS $3 -o \$out
+  description = Linking \$out
+EOF
+}
+
+Build() {
+  objects=
+  
+  for file in $3; do
+    object="Build/$build_config/$(echo $file | sed "s/\\.c$/.o/")"
+    objects="$objects $object"
+    
+    echo "build $object: compile_$2 src/$file" >> build.ninja
+  done
+  
+  echo "build $1/$2: link_$2$objects" >> build.ninja
+}
+
+BuildWithDependency() {
+  objects=
+  
+  for file in $4; do
+    object="Build/$build_config/$(echo $file | sed "s/\\.c$/.o/")"
+    objects="$objects $object"
+    
+    echo "build $object: compile_$2 src/$file" >> build.ninja
+  done
+  
+  echo "build $1/$2: link_$2$objects | $3" >> build.ninja
+}
+
+AddDefaultTarget() {
+  echo "default $1" >> build.ninja
+}
+
+Install() {
+  for file in $2; do
+    install_files="$install_files $PREFIX/$1/$file"
+    
+    echo "build $PREFIX/$1/$file: install $1/$file" >> build.ninja
+  done
+}
+
+IncludeBuildInfo() {
+  . ./$1/BuildInfo
+}
+
+. "BuildConfigs/$build_config"
+
+if [ -f build.ninja ]; then
+  rm build.ninja
+fi
+
+touch build.ninja
+
+cat << EOF >> build.ninja
+rule install
+  command = $INSTALL \$in \$out
+  description = Installing \$out
+EOF
+
+IncludeBuildInfo .
+
+echo "build install: phony$install_files" >> build.ninja
+
+if [ ! -f .clangd ]; then
+cat << EOF > .clangd
+CompileFlags:
+  Add: [ -xc, -I$(realpath include) ]
+EOF
+fi

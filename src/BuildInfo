@@ -1,0 +1,8 @@
+LibraryBuildRule libdespot-metadata.so "" ""
+
+Build lib libdespot-metadata.so "
+main.c
+"
+
+AddDefaultTarget lib/libdespot-metadata.so
+Install lib libdespot-metadata.so

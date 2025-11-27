@@ -1,0 +1,3 @@
+IncludeBuildInfo src
+IncludeBuildInfo src/util
+IncludeBuildInfo include

@@ -1,0 +1,8 @@
+BuildRule despot-metadata "" ""
+
+Build bin despot-metadata "
+util/despot-metadata.c
+"
+
+AddDefaultTarget bin/despot-metadata
+Install bin despot-metadata

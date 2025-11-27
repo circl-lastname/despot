@@ -1,0 +1,6 @@
+/.clangd
+/.ninja_log
+/bin
+/Build
+/build.ninja
+/lib
