@@ -1,0 +1,4 @@
+. BuildConfigs/Release
+
+BIN_CFLAGS="$BIN_CFLAGS -Wall -Werror"
+LIB_CFLAGS="$LIB_CFLAGS -Wall -Werror"

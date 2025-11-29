@@ -1,6 +1,7 @@
 LibraryBuildRule libdespot-metadata.so "" ""
 
 Build lib libdespot-metadata.so "
+ctx.c
 main.c
 "
 

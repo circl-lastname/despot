@@ -4,5 +4,5 @@ PREFIX=/usr/local
 
 BIN_CFLAGS="-O2 -Iinclude"
 BIN_LDFLAGS="-s -Llib -ldespot-metadata"
-LIB_CFLAGS="-fPIC -O2 -Iinclude"
+LIB_CFLAGS="-fPIC -fvisibility=hidden -O2 -Iinclude"
 LIB_LDFLAGS="-shared -s"

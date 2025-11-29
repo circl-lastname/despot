@@ -1,5 +1,6 @@
 . BuildConfigs/Release
-BIN_CFLAGS="-g -O2 -Iinclude"
+
+BIN_CFLAGS="-g -Iinclude"
 BIN_LDFLAGS="-g -Llib -ldespot-metadata"
-LIB_CFLAGS="-fPIC -g -O2 -Iinclude"
+LIB_CFLAGS="-fPIC -fvisibility=hidden -g -Iinclude"
 LIB_LDFLAGS="-shared -g"
