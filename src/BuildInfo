@@ -2,7 +2,10 @@ LibraryBuildRule libdespot-metadata.so "" ""
 
 Build lib libdespot-metadata.so "
 ctx.c
+formats/flac.c
 main.c
+stb_ds.c
+metadata-formats/vorbis-comment.c
 "
 
 AddDefaultTarget lib/libdespot-metadata.so
