@@ -69,6 +69,10 @@ EXPORT despot_result_t despot_read_from_mem(despot_ctx_t** ctx, void* buffer, si
   return parse(*ctx);
 }
 
+EXPORT const char* despot_get_basic_tag(despot_ctx_t* ctx, despot_tag_id_t tag) {
+  return ctx->get_basic_tag(ctx, tag);
+}
+
 EXPORT void despot_free_ctx(despot_ctx_t* ctx) {
   if (ctx->vendor) {
     free(ctx->vendor);
@@ -76,7 +80,6 @@ EXPORT void despot_free_ctx(despot_ctx_t* ctx) {
   
   size_t metadata_keys = shlenu(ctx->metadata);
   for (size_t i = 0; i < metadata_keys; i++) {
-    printf("%s = %s\n", ctx->metadata[i].key, ctx->metadata[i].value);
     free(ctx->metadata[i].key);
   }
   

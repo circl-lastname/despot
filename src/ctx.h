@@ -13,10 +13,7 @@ typedef enum {
   CTX_SOURCE_FD
 } ctx_source_t;
 
-typedef struct {
-  char* key;
-  char* value;
-} ctx_metadata_t;
+typedef const char* (*ctx_get_basic_tag_t)(despot_ctx_t* ctx, despot_tag_id_t tag);
 
 struct despot_ctx_s {
   ctx_source_t source;
@@ -29,8 +26,9 @@ struct despot_ctx_s {
     int fd;
   };
   
-  char* vendor;
-  ctx_metadata_t* metadata;
+  char* vendor; // Only used by Vorbis comments
+  despot_tag_t* metadata;
+  ctx_get_basic_tag_t get_basic_tag;
 };
 
 despot_result_t ctx_seek(despot_ctx_t* ctx, size_t offset);

@@ -20,6 +20,8 @@ enum {
 despot_result_t flac_parse(despot_ctx_t* ctx) {
   // Relevant: https://www.rfc-editor.org/rfc/rfc9639.html
   
+  ctx->get_basic_tag = vorbis_comment_get_basic_tag;
+  
   bool blocks_remain = true;
   
   while (blocks_remain) {

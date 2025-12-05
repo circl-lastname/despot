@@ -1,19 +1,48 @@
-#include <stdio.h>
 #include <despot-metadata.h>
+#include <errno.h>
+#include <fcntl.h>
+#include <stdio.h>
+#include <string.h>
+#include <unistd.h>
 
-void try(char* filename) {
-  FILE* file = fopen(filename, "rb");
-  despot_ctx_t* ctx;
-  puts(despot_result_to_string(despot_read_from_file(&ctx, file)));
-  despot_free_ctx(ctx);
-  fclose(file);
+void try_get_metadata(despot_ctx_t* ctx, despot_tag_id_t tag, char* name) {
+  const char* value = despot_get_basic_tag(ctx, tag);
+  if (value) {
+    printf("%s: %s\n", name, value);
+  }
 }
 
-int main() {
-  //try("test/03 - Amnesia Was Her Name.flac");
-  try("test/soundgirls.flac");
-  //try("test/empty");
-  //try("test/notflac");
+int main(int argc, char** argv) {
+  if (argc != 2) {
+    fprintf(stderr, "Usage: %s FILE\n", argv[0]);
+    return 1;
+  }
+  
+  int fd = open(argv[1], O_RDONLY);
+  if (fd < 0) {
+    fprintf(stderr, "%s: Failed to open file: %s\n", argv[0], strerror(errno));
+    return 1;
+  }
+  
+  despot_ctx_t* ctx;
+  despot_result_t result;
+  if ((result = despot_read_from_fd(&ctx, fd)) != DESPOT_RESULT_SUCCESS) {
+    fprintf(stderr, "%s: Failed to read metadata: %s\n", argv[0], despot_result_to_string(result));
+    return 1;
+  }
+  
+  try_get_metadata(ctx, DESPOT_TAG_TITLE, "Title");
+  try_get_metadata(ctx, DESPOT_TAG_ARTIST, "Artist");
+  try_get_metadata(ctx, DESPOT_TAG_ALBUM, "Album");
+  try_get_metadata(ctx, DESPOT_TAG_ALBUM_ARTIST, "Album artist");
+  try_get_metadata(ctx, DESPOT_TAG_TRACK, "Track");
+  try_get_metadata(ctx, DESPOT_TAG_DISC, "Disc");
+  try_get_metadata(ctx, DESPOT_TAG_TRACK_AMOUNT, "Total tracks");
+  try_get_metadata(ctx, DESPOT_TAG_DISC_AMOUNT, "Total discs");
+  try_get_metadata(ctx, DESPOT_TAG_VENDOR, "Vendor");
+  
+  despot_free_ctx(ctx);
+  close(fd);
   
   return 0;
 }
