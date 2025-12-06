@@ -48,6 +48,7 @@ despot_result_t vorbis_comment_parse(despot_ctx_t* ctx) {
     }
     
     if (!value) {
+      // No '=' sign
       free(key);
       continue;
     }

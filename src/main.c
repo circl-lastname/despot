@@ -43,11 +43,7 @@ EXPORT despot_result_t despot_read_from_fd(despot_ctx_t** ctx, int fd) {
     return DESPOT_RESULT_SEE_ERRNO;
   }
   
-  despot_result_t result = parse(*ctx);
-  
-  close((*ctx)->fd);
-  
-  return result;
+  return parse(*ctx);
 }
 
 EXPORT despot_result_t despot_read_from_file(despot_ctx_t** ctx, FILE* file) {
@@ -69,11 +65,24 @@ EXPORT despot_result_t despot_read_from_mem(despot_ctx_t** ctx, void* buffer, si
   return parse(*ctx);
 }
 
+EXPORT despot_tag_t* despot_get_tags(despot_ctx_t* ctx, size_t* amount) {
+  *amount = shlenu(ctx->metadata);
+  return ctx->metadata;
+}
+
+EXPORT const char* despot_get_tag(despot_ctx_t* ctx, const char* tag) {
+  return shget(ctx->metadata, tag);
+}
+
 EXPORT const char* despot_get_basic_tag(despot_ctx_t* ctx, despot_tag_id_t tag) {
   return ctx->get_basic_tag(ctx, tag);
 }
 
 EXPORT void despot_free_ctx(despot_ctx_t* ctx) {
+  if (ctx->source == CTX_SOURCE_FD) {
+    close(ctx->fd);
+  }
+  
   if (ctx->vendor) {
     free(ctx->vendor);
   }
@@ -98,8 +107,6 @@ EXPORT const char* despot_result_to_string(despot_result_t result) {
       return "Unexpected end of file";
     case DESPOT_RESULT_UNRECOGNIZED_FORMAT:
       return "Unrecognized format";
-    case DESPOT_RESULT_PARSING_ERROR:
-      return "Failed to parse metadata";
     case DESPOT_RESULT_SEE_ERRNO:
       return strerror(errno);
     default:

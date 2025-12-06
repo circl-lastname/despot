@@ -3,6 +3,7 @@
 #include <despot-metadata.h>
 
 #include "../ctx.h"
+#include "../metadata-formats/flac-picture.h"
 #include "../metadata-formats/vorbis-comment.h"
 #include "../misc.h"
 #include "flac.h"
@@ -31,21 +32,27 @@ despot_result_t flac_parse(despot_ctx_t* ctx) {
     blocks_remain = !(block_type & 0x80);
     block_type &= 0x7f;
     
-    uint32_t block_size;
-    MUST(ctx_read_u24_be(ctx, &block_size));
+    size_t next_block_address;
+    
+    if (blocks_remain) {
+      uint32_t block_size;
+      MUST(ctx_read_u24_be(ctx, &block_size));
+      next_block_address = ctx_tell(ctx) + block_size;
+    } else {
+      MUST(ctx_skip(ctx, 3));
+    }
     
     switch (block_type) {
-      case FLAC_VORBIS_COMMENT: {
-        size_t next_block_address = ctx_tell(ctx) + block_size;
+      case FLAC_VORBIS_COMMENT:
         MUST(vorbis_comment_parse(ctx));
-        MUST(ctx_seek(ctx, next_block_address));
-      } break;
-      case FLAC_PICTURE:
-        // TODO
-        MUST(ctx_skip(ctx, block_size));
       break;
-      default:
-        MUST(ctx_skip(ctx, block_size));
+      case FLAC_PICTURE:
+        MUST(flac_picture_parse(ctx));
+      break;
+    }
+    
+    if (blocks_remain) {
+      MUST(ctx_seek(ctx, next_block_address));
     }
   }
   

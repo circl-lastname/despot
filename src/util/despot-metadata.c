@@ -31,6 +31,8 @@ int main(int argc, char** argv) {
     return 1;
   }
   
+  close(fd);
+  
   try_get_metadata(ctx, DESPOT_TAG_TITLE, "Title");
   try_get_metadata(ctx, DESPOT_TAG_ARTIST, "Artist");
   try_get_metadata(ctx, DESPOT_TAG_ALBUM, "Album");
@@ -42,7 +44,6 @@ int main(int argc, char** argv) {
   try_get_metadata(ctx, DESPOT_TAG_VENDOR, "Vendor");
   
   despot_free_ctx(ctx);
-  close(fd);
   
   return 0;
 }

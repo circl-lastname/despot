@@ -5,6 +5,7 @@ ctx.c
 formats/flac.c
 main.c
 stb_ds.c
+metadata-formats/flac-picture.c
 metadata-formats/vorbis-comment.c
 "
 
