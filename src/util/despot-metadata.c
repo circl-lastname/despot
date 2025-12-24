@@ -43,6 +43,19 @@ int main(int argc, char** argv) {
   try_get_metadata(ctx, DESPOT_TAG_DISC_AMOUNT, "Total discs");
   try_get_metadata(ctx, DESPOT_TAG_VENDOR, "Vendor");
   
+  size_t pictures_amount;
+  despot_picture_t* pictures = despot_get_pictures(ctx, &pictures_amount);
+  
+  for (size_t i = 0; i < pictures_amount; i++) {
+    printf("\nPicture %zu:\n", i+1);
+    printf("  Type: %s\n", despot_picture_type_to_string(pictures[i].type));
+    printf("  Media type: %s\n", pictures[i].media_type);
+    printf("  Description: %s\n", pictures[i].description);
+    printf("  Width: %u\n", pictures[i].width);
+    printf("  Height: %u\n", pictures[i].height);
+    printf("  Size: %zu\n", pictures[i].size);
+  }
+  
   despot_free_ctx(ctx);
   
   return 0;

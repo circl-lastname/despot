@@ -5,6 +5,7 @@
 typedef enum {
   DESPOT_RESULT_SUCCESS,
   DESPOT_RESULT_INTERNAL_ERROR,
+  DESPOT_RESULT_OUT_OF_BOUNDS,
   DESPOT_RESULT_UNEXPECTED_EOF,
   DESPOT_RESULT_UNRECOGNIZED_FORMAT,
   DESPOT_RESULT_SEE_ERRNO,
@@ -70,6 +71,12 @@ despot_result_t despot_read_from_mem(despot_ctx_t** ctx, void* buffer, size_t si
 despot_tag_t* despot_get_tags(despot_ctx_t* ctx, size_t* amount);
 const char* despot_get_tag(despot_ctx_t* ctx, const char* tag);
 const char* despot_get_basic_tag(despot_ctx_t* ctx, despot_tag_id_t tag);
+
+despot_picture_t* despot_get_pictures(despot_ctx_t* ctx, size_t* amount);
+despot_result_t despot_load_picture(despot_ctx_t* ctx, unsigned index, void** buffer, size_t* size);
+int despot_find_preferred_picture(despot_ctx_t* ctx);
+
+const char* despot_picture_type_to_string(despot_picture_type_t type);
 
 void despot_free_ctx(despot_ctx_t* ctx);
 

@@ -28,6 +28,7 @@ struct despot_ctx_s {
   
   char* vendor; // Only used by Vorbis comments
   despot_tag_t* metadata;
+  despot_picture_t* pictures;
   ctx_get_basic_tag_t get_basic_tag;
 };
 

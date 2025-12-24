@@ -78,6 +78,8 @@ despot_result_t vorbis_comment_parse(despot_ctx_t* ctx) {
 }
 
 const char* vorbis_comment_get_basic_tag(despot_ctx_t* ctx, despot_tag_id_t tag) {
+  // Relevant: https://wiki.xiph.org/VorbisComment
+  
   char* key;
   
   switch (tag) {
@@ -100,10 +102,10 @@ const char* vorbis_comment_get_basic_tag(despot_ctx_t* ctx, despot_tag_id_t tag)
       key = "discnumber";
     break;
     case DESPOT_TAG_TRACK_AMOUNT:
-      key = "totaltracks";
+      key = "tracktotal";
     break;
     case DESPOT_TAG_DISC_AMOUNT:
-      key = "totaldiscs";
+      key = "disctotal";
     break;
     case DESPOT_TAG_VENDOR:
       return ctx->vendor;
