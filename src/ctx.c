@@ -3,7 +3,7 @@
 #include <string.h>
 #include <unistd.h>
 
-#include <despot-metadata.h>
+#include <despot.h>
 
 #include "ctx.h"
 

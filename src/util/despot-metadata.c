@@ -1,4 +1,4 @@
-#include <despot-metadata.h>
+#include <despot.h>
 #include <errno.h>
 #include <fcntl.h>
 #include <stdio.h>

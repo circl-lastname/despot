@@ -1,4 +1,4 @@
-#include <despot-metadata.h>
+#include <despot.h>
 
 #include "../ctx.h"
 #include "../misc.h"

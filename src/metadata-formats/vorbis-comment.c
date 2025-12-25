@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include <despot-metadata.h>
+#include <despot.h>
 
 #include "../ctx.h"
 #include "../misc.h"

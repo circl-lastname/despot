@@ -1,6 +1,6 @@
-LibraryBuildRule libdespot-metadata.so "" ""
+LibraryBuildRule libdespot.so "" ""
 
-Build lib libdespot-metadata.so "
+Build lib libdespot.so "
 ctx.c
 formats/flac.c
 main.c
@@ -9,5 +9,5 @@ metadata-formats/flac-picture.c
 metadata-formats/vorbis-comment.c
 "
 
-AddDefaultTarget lib/libdespot-metadata.so
-Install lib libdespot-metadata.so
+AddDefaultTarget lib/libdespot.so
+Install lib libdespot.so

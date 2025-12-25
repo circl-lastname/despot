@@ -1,6 +1,6 @@
 BuildRule despot-metadata "" ""
 
-BuildWithDependency bin despot-metadata lib/libdespot-metadata.so "
+BuildWithDependency bin despot-metadata lib/libdespot.so "
 util/despot-metadata.c
 "
 

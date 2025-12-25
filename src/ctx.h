@@ -4,7 +4,7 @@
 #include <stddef.h>
 #include <stdint.h>
 
-#include <despot-metadata.h>
+#include <despot.h>
 
 #include "misc.h"
 

@@ -1,6 +1,6 @@
 #include <stdbool.h>
 
-#include <despot-metadata.h>
+#include <despot.h>
 
 #include "../ctx.h"
 #include "../metadata-formats/flac-picture.h"
