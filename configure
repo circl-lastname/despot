@@ -32,7 +32,7 @@ Build() {
   objects=
   
   for file in $3; do
-    object="Build/$build_config/$(echo $file | sed "s/\\.c$/.o/")"
+    object="Build/$build_config/$1/$2/$(echo $file | sed "s/\\.c$/.o/")"
     objects="$objects $object"
     
     echo "build $object: compile_$2 src/$file" >> build.ninja
@@ -45,7 +45,7 @@ BuildWithDependency() {
   objects=
   
   for file in $4; do
-    object="Build/$build_config/$(echo $file | sed "s/\\.c$/.o/")"
+    object="Build/$build_config/$1/$2/$(echo $file | sed "s/\\.c$/.o/")"
     objects="$objects $object"
     
     echo "build $object: compile_$2 src/$file" >> build.ninja
@@ -91,6 +91,6 @@ echo "build install: phony$install_files" >> build.ninja
 if [ ! -f .clangd ]; then
 cat << EOF > .clangd
 CompileFlags:
-  Add: [ -xc, -I$(realpath include) ]
+  Add: [ -xc, -I$(realpath include), -I$(realpath src) ]
 EOF
 fi

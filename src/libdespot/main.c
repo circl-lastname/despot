@@ -10,7 +10,7 @@
 #include "ctx.h"
 #include "formats/flac.h"
 #include "misc.h"
-#include "stb_ds.h"
+#include "shared/stb_ds.h"
 
 static const uint8_t picture_type_score[] = {
   [DESPOT_PICTURE_FRONT_COVER] = 6,

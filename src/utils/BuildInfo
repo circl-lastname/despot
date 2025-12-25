@@ -1,7 +1,7 @@
 BuildRule despot-metadata "" ""
 
 BuildWithDependency bin despot-metadata lib/libdespot.so "
-util/despot-metadata.c
+utils/despot-metadata.c
 "
 
 AddDefaultTarget bin/despot-metadata

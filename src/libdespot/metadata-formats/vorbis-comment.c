@@ -6,7 +6,7 @@
 
 #include "../ctx.h"
 #include "../misc.h"
-#include "../stb_ds.h"
+#include "shared/stb_ds.h"
 #include "vorbis-comment.h"
 
 despot_result_t vorbis_comment_parse(despot_ctx_t* ctx) {

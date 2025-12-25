@@ -2,8 +2,8 @@
 
 #include "../ctx.h"
 #include "../misc.h"
-#include "../stb_ds.h"
 #include "flac-picture.h"
+#include "shared/stb_ds.h"
 
 static void cleanup(despot_picture_t* picture) {
   if (picture->media_type) {
