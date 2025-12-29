@@ -1,3 +1,2 @@
-IncludeBuildInfo src/libdespot
-IncludeBuildInfo src/utils
 IncludeBuildInfo include
+IncludeBuildInfo src

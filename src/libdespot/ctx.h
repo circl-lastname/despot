@@ -6,7 +6,7 @@
 
 #include <despot.h>
 
-#include "misc.h"
+#include "shared/misc.h"
 
 typedef enum {
   CTX_SOURCE_MEM,

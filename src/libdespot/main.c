@@ -9,7 +9,7 @@
 
 #include "ctx.h"
 #include "formats/flac.h"
-#include "misc.h"
+#include "shared/misc.h"
 #include "shared/stb_ds.h"
 
 static const uint8_t picture_type_score[] = {

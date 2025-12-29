@@ -5,7 +5,7 @@
 #include <despot.h>
 
 #include "../ctx.h"
-#include "../misc.h"
+#include "shared/misc.h"
 #include "shared/stb_ds.h"
 #include "vorbis-comment.h"
 

@@ -1,8 +1,8 @@
 #include <despot.h>
 
 #include "../ctx.h"
-#include "../misc.h"
 #include "flac-picture.h"
+#include "shared/misc.h"
 #include "shared/stb_ds.h"
 
 static void cleanup(despot_picture_t* picture) {

@@ -5,8 +5,8 @@
 #include "../ctx.h"
 #include "../metadata-formats/flac-picture.h"
 #include "../metadata-formats/vorbis-comment.h"
-#include "../misc.h"
 #include "flac.h"
+#include "shared/misc.h"
 
 enum {
   FLAC_STREAMINFO,
