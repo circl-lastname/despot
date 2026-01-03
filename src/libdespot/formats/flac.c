@@ -18,7 +18,7 @@ enum {
   FLAC_PICTURE,
 };
 
-despot_result_t flac_parse(despot_ctx_t* ctx) {
+despot_result_t flac_parse(despot_ctx_t* ctx, io_t* io) {
   // Relevant: https://www.rfc-editor.org/rfc/rfc9639.html
   
   ctx->get_basic_tag = vorbis_comment_get_basic_tag;
@@ -27,7 +27,7 @@ despot_result_t flac_parse(despot_ctx_t* ctx) {
   
   while (blocks_remain) {
     uint8_t block_type;
-    MUST(ctx_read_u8(ctx, &block_type));
+    MUST(io_read_u8(io, &block_type));
     
     blocks_remain = !(block_type & 0x80);
     block_type &= 0x7f;
@@ -36,23 +36,23 @@ despot_result_t flac_parse(despot_ctx_t* ctx) {
     
     if (blocks_remain) {
       uint32_t block_size;
-      MUST(ctx_read_u24_be(ctx, &block_size));
-      next_block_address = ctx_tell(ctx) + block_size;
+      MUST(io_read_u24_be(io, &block_size));
+      next_block_address = io_tell(io) + block_size;
     } else {
-      MUST(ctx_skip(ctx, 3));
+      MUST(io_skip(io, 3));
     }
     
     switch (block_type) {
       case FLAC_VORBIS_COMMENT:
-        MUST(vorbis_comment_parse(ctx));
+        MUST(vorbis_comment_parse(ctx, io));
       break;
       case FLAC_PICTURE:
-        MUST(flac_picture_parse(ctx));
+        MUST(flac_picture_parse(ctx, io));
       break;
     }
     
     if (blocks_remain) {
-      MUST(ctx_seek(ctx, next_block_address));
+      MUST(io_seek(io, next_block_address));
     }
   }
   

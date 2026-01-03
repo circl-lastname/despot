@@ -36,9 +36,9 @@ static const uint8_t picture_type_score[] = {
   [DESPOT_PICTURE_BRIGHT_COLORED_FISH] = 0,
 };
 
-static despot_result_t parse(despot_ctx_t* ctx) {
+static despot_result_t parse(despot_ctx_t* ctx, io_t* io) {
   uint32_t magic_number;
-  despot_result_t read_result = ctx_read_u32_be(ctx, &magic_number);
+  despot_result_t read_result = io_read_u32_be(io, &magic_number);
   
   if (read_result == DESPOT_RESULT_UNEXPECTED_EOF) {
     return DESPOT_RESULT_UNRECOGNIZED_FORMAT;
@@ -49,7 +49,7 @@ static despot_result_t parse(despot_ctx_t* ctx) {
   // FLAC
   // Relevant: https://www.rfc-editor.org/rfc/rfc9639.html
   if (magic_number == 0x664c6143) {
-    return flac_parse(ctx);
+    return flac_parse(ctx, io);
   }
   
   return DESPOT_RESULT_UNRECOGNIZED_FORMAT;
@@ -58,22 +58,22 @@ static despot_result_t parse(despot_ctx_t* ctx) {
 EXPORT despot_result_t despot_read_from_fd(despot_ctx_t** ctx, int fd) {
   *ctx = calloc(1, sizeof(despot_ctx_t));
   
-  (*ctx)->source = CTX_SOURCE_FD;
-  (*ctx)->fd = dup(fd);
+  (*ctx)->io.source = IO_SOURCE_FD;
+  (*ctx)->io.fd = dup(fd);
   
-  if ((*ctx)->fd < 0) {
+  if ((*ctx)->io.fd < 0) {
     free(*ctx);
     *ctx = NULL;
     return DESPOT_RESULT_SEE_ERRNO;
   }
   
-  if (lseek((*ctx)->fd, 0, SEEK_SET) < 0) {
+  if (lseek((*ctx)->io.fd, 0, SEEK_SET) < 0) {
     free(*ctx);
     *ctx = NULL;
     return DESPOT_RESULT_SEE_ERRNO;
   }
   
-  return parse(*ctx);
+  return parse(*ctx, &(*ctx)->io);
 }
 
 EXPORT despot_result_t despot_read_from_file(despot_ctx_t** ctx, FILE* file) {
@@ -88,11 +88,11 @@ EXPORT despot_result_t despot_read_from_file(despot_ctx_t** ctx, FILE* file) {
 EXPORT despot_result_t despot_read_from_mem(despot_ctx_t** ctx, void* buffer, size_t size) {
   *ctx = calloc(1, sizeof(despot_ctx_t));
   
-  (*ctx)->source = CTX_SOURCE_MEM;
-  (*ctx)->mem.buffer = buffer;
-  (*ctx)->mem.size = size;
+  (*ctx)->io.source = IO_SOURCE_MEM;
+  (*ctx)->io.mem.buffer = buffer;
+  (*ctx)->io.mem.size = size;
   
-  return parse(*ctx);
+  return parse(*ctx, &(*ctx)->io);
 }
 
 EXPORT despot_tag_t* despot_get_tags(despot_ctx_t* ctx, size_t* amount) {
@@ -126,8 +126,8 @@ EXPORT despot_result_t despot_load_picture(despot_ctx_t* ctx, unsigned index, vo
   
   // TODO: Figure out if ID3 unsynchronisation is needed nowadays, then call into an format specific function
   *buffer = malloc(picture_size);
-  MUST(ctx_seek(ctx, ctx->pictures[index].source_offset));
-  MUST(ctx_read(ctx, *buffer, picture_size));
+  MUST(io_seek(&ctx->io, ctx->pictures[index].source_offset));
+  MUST(io_read(&ctx->io, *buffer, picture_size));
   
   return DESPOT_RESULT_SUCCESS;
 }
@@ -207,8 +207,8 @@ EXPORT const char* despot_picture_type_to_string(despot_picture_type_t type) {
 }
 
 EXPORT void despot_free_ctx(despot_ctx_t* ctx) {
-  if (ctx->source == CTX_SOURCE_FD) {
-    close(ctx->fd);
+  if (ctx->io.source == IO_SOURCE_FD) {
+    close(ctx->io.fd);
   }
   
   if (ctx->vendor) {

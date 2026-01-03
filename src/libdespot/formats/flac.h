@@ -2,4 +2,6 @@
 
 #include <despot.h>
 
-despot_result_t flac_parse(despot_ctx_t* ctx);
+#include "shared/io.h"
+
+despot_result_t flac_parse(despot_ctx_t* ctx, io_t* io);

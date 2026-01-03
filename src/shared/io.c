@@ -5,18 +5,18 @@
 
 #include <despot.h>
 
-#include "ctx.h"
+#include "io.h"
 
-despot_result_t ctx_seek(despot_ctx_t* ctx, size_t offset) {
-  if (ctx->source == CTX_SOURCE_MEM) {
-    if (offset >= ctx->mem.size) {
+despot_result_t io_seek(io_t* io, size_t offset) {
+  if (io->source == IO_SOURCE_MEM) {
+    if (offset >= io->mem.size) {
       return DESPOT_RESULT_UNEXPECTED_EOF;
     }
     
-    ctx->mem.offset = offset;
+    io->mem.offset = offset;
     return DESPOT_RESULT_SUCCESS;
-  } else if (ctx->source == CTX_SOURCE_FD) {
-    if (lseek(ctx->fd, offset, SEEK_SET) < 0) {
+  } else if (io->source == IO_SOURCE_FD) {
+    if (lseek(io->fd, offset, SEEK_SET) < 0) {
       if (errno == EINVAL) {
         return DESPOT_RESULT_UNEXPECTED_EOF;
       } else {
@@ -30,20 +30,20 @@ despot_result_t ctx_seek(despot_ctx_t* ctx, size_t offset) {
   }
 }
 
-despot_result_t ctx_skip(despot_ctx_t* ctx, size_t amount) {
+despot_result_t io_skip(io_t* io, size_t amount) {
   if (amount == 0) {
     return DESPOT_RESULT_SUCCESS;
   }
   
-  if (ctx->source == CTX_SOURCE_MEM) {
-    if (ctx->mem.offset+amount > ctx->mem.size) {
+  if (io->source == IO_SOURCE_MEM) {
+    if (io->mem.offset+amount > io->mem.size) {
       return DESPOT_RESULT_UNEXPECTED_EOF;
     }
     
-    ctx->mem.offset += amount;
+    io->mem.offset += amount;
     return DESPOT_RESULT_SUCCESS;
-  } else if (ctx->source == CTX_SOURCE_FD) {
-    if (lseek(ctx->fd, amount, SEEK_CUR) < 0) {
+  } else if (io->source == IO_SOURCE_FD) {
+    if (lseek(io->fd, amount, SEEK_CUR) < 0) {
       if (errno == EINVAL) {
         return DESPOT_RESULT_UNEXPECTED_EOF;
       } else {
@@ -57,34 +57,34 @@ despot_result_t ctx_skip(despot_ctx_t* ctx, size_t amount) {
   }
 }
 
-size_t ctx_tell(despot_ctx_t* ctx) {
-  if (ctx->source == CTX_SOURCE_MEM) {
-    return ctx->mem.offset;
-  } else if (ctx->source == CTX_SOURCE_FD) {
-    return lseek(ctx->fd, 0, SEEK_CUR);
+size_t io_tell(io_t* io) {
+  if (io->source == IO_SOURCE_MEM) {
+    return io->mem.offset;
+  } else if (io->source == IO_SOURCE_FD) {
+    return lseek(io->fd, 0, SEEK_CUR);
   } else {
     return 0;
   }
 }
 
-despot_result_t ctx_read(despot_ctx_t* ctx, void* buffer, size_t amount) {
+despot_result_t io_read(io_t* io, void* buffer, size_t amount) {
   if (amount == 0) {
     return DESPOT_RESULT_SUCCESS;
   }
   
-  if (ctx->source == CTX_SOURCE_MEM) {
-    if (ctx->mem.offset+amount > ctx->mem.size) {
+  if (io->source == IO_SOURCE_MEM) {
+    if (io->mem.offset+amount > io->mem.size) {
       return DESPOT_RESULT_UNEXPECTED_EOF;
     }
     
-    memcpy(buffer, ctx->mem.buffer+ctx->mem.offset, amount);
-    ctx->mem.offset += amount;
+    memcpy(buffer, io->mem.buffer+io->mem.offset, amount);
+    io->mem.offset += amount;
     return DESPOT_RESULT_SUCCESS;
-  } else if (ctx->source == CTX_SOURCE_FD) {
+  } else if (io->source == IO_SOURCE_FD) {
     size_t amount_read = 0;
     
     while (amount_read < amount) {
-      ssize_t read_result = read(ctx->fd, buffer+amount_read, amount-amount_read);
+      ssize_t read_result = read(io->fd, buffer+amount_read, amount-amount_read);
       
       if (read_result == 0) {
         return DESPOT_RESULT_UNEXPECTED_EOF;
