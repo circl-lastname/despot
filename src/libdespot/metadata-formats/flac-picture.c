@@ -10,7 +10,7 @@ static void cleanup(despot_picture_t* picture) {
     free((char*)picture->media_type);
   }
   
-  if (picture->media_type) {
+  if (picture->description) {
     free((char*)picture->description);
   }
 }
