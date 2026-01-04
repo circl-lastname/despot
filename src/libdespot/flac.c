@@ -2,11 +2,11 @@
 
 #include <despot.h>
 
-#include "../ctx.h"
-#include "../metadata-formats/flac-picture.h"
-#include "../metadata-formats/vorbis-comment.h"
+#include "ctx.h"
 #include "flac.h"
+#include "flac-picture.h"
 #include "shared/misc.h"
+#include "vorbis-comment.h"
 
 enum {
   FLAC_STREAMINFO,

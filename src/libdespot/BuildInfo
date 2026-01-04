@@ -1,10 +1,10 @@
 LibraryBuildRule libdespot.so "" ""
 
 Build lib libdespot.so "
-libdespot/formats/flac.c
+libdespot/flac.c
+libdespot/flac-picture.c
 libdespot/main.c
-libdespot/metadata-formats/flac-picture.c
-libdespot/metadata-formats/vorbis-comment.c
+libdespot/vorbis-comment.c
 shared/io.c
 shared/stb_ds.c
 "

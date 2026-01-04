@@ -8,7 +8,7 @@
 #include <despot.h>
 
 #include "ctx.h"
-#include "formats/flac.h"
+#include "flac.h"
 #include "shared/misc.h"
 #include "shared/stb_ds.h"
 
