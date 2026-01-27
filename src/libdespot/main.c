@@ -9,6 +9,7 @@
 
 #include "ctx.h"
 #include "flac.h"
+#include "ogg.h"
 #include "shared/misc.h"
 #include "shared/stb_ds.h"
 
@@ -46,10 +47,15 @@ static despot_result_t parse(despot_ctx_t* ctx, io_t* io) {
     return read_result;
   }
   
-  // FLAC
-  // Relevant: https://www.rfc-editor.org/rfc/rfc9639.html
-  if (magic_number == 0x664c6143) {
-    return flac_parse(ctx, io);
+  switch (magic_number) {
+    // FLAC
+    // Relevant: https://www.rfc-editor.org/rfc/rfc9639.html
+    case 0x664c6143:
+      return flac_parse(ctx, io);
+    // Ogg
+    // Relevant: https://www.rfc-editor.org/rfc/rfc3533.html
+    //case 0x4f676753:
+    //  return ogg_parse(ctx, io);
   }
   
   return DESPOT_RESULT_UNRECOGNIZED_FORMAT;
@@ -245,6 +251,8 @@ EXPORT const char* despot_result_to_string(despot_result_t result) {
       return "Unexpected end of file";
     case DESPOT_RESULT_UNRECOGNIZED_FORMAT:
       return "Unrecognized format";
+    case DESPOT_RESULT_FORMAT_ERROR:
+      return "File format error";
     case DESPOT_RESULT_SEE_ERRNO:
       return strerror(errno);
     default:
