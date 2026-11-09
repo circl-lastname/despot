@@ -12,7 +12,7 @@
 #include "main.h"
 #include "shared/stb_ds.h"
 
-const char* command_name;
+const char* command_name = "despot-scan";
 
 track_t* tracks = NULL;
 
@@ -54,7 +54,7 @@ static void tracks_free() {
 static void print_progress() {
   progress_file_count++;
   if (progress_file_count == 50) {
-    fprintf(stderr, "\rScanning... %u", stat_total_files);
+    fprintf(stdout, "\rScanning... %u", stat_total_files);
     progress_file_count = 0;
   }
 }
@@ -67,12 +67,12 @@ static int scan_func(const char* fpath, const struct stat* sb, int typeflag, str
   if (typeflag != FTW_F) {
     // errno not guaranteed, but try to show an error anyway
     if (typeflag == FTW_DNR) {
-      fprintf(stderr, "\r%s: Failed to scan directory %s: %s\n", command_name, path, strerror(errno));
+      fprintf(stderr, "\rFailed to scan directory %s: %s\n", path, strerror(errno));
     } else if (typeflag == FTW_NS || typeflag == FTW_SLN) {
       stat_total_files++;
       stat_errors++;
       
-      fprintf(stderr, "\r%s: Failed to scan file %s: %s\n", command_name, path, strerror(errno));
+      fprintf(stderr, "\rFailed to scan file %s: %s\n", path, strerror(errno));
       
       print_progress();
     }
@@ -146,7 +146,7 @@ static int scan_func(const char* fpath, const struct stat* sb, int typeflag, str
       track->disc = disc_num ? atoi(disc_num) : 0;
       track->is_audio = true;
       
-      // TODO Picture system and processing for JSON output
+      // TODO Picture system
       
       despot_free_ctx(ctx);
       fclose(file);
@@ -168,7 +168,7 @@ static int scan_func(const char* fpath, const struct stat* sb, int typeflag, str
       despot_free_ctx(ctx);
       fclose(file);
       
-      fprintf(stderr, "\r%s: Failed to scan file %s: %s\n", command_name, path, despot_result_to_string(result));
+      fprintf(stderr, "\rFailed to scan file %s: %s\n", path, despot_result_to_string(result));
       
       print_progress();
       
@@ -181,6 +181,8 @@ static int scan_func(const char* fpath, const struct stat* sb, int typeflag, str
     shput(tracks, allocated_path, track);
   }
   
+  // TODO Processing for JSON output
+  
   print_progress();
   
   return 0;
@@ -191,8 +193,6 @@ static void print_usage() {
 }
 
 int main(int argc, char** argv) {
-  command_name = argv[0];
-  
   // Parse command line arguments
   const char* directory = NULL;
   const char* database = NULL;
@@ -255,7 +255,7 @@ int main(int argc, char** argv) {
     return 1;
   }
   
-  fputs("despot by Nexa | Despot-ify your music library\n\n", stderr);
+  fputs("despot by Nexa | Despot-ify your music library\n\n", stdout);
   
   // Open files, load database, and enter directory
   FILE* database_file = fopen(database, "rb");
@@ -288,7 +288,7 @@ int main(int argc, char** argv) {
     }
   }
   
-  fputs("Scanning...", stderr);
+  fputs("Scanning...", stdout);
   
   if (nftw(".", scan_func, 512, 0) < 0) {
     fprintf(stderr, "\r%s: Failed to scan directory: %s\n", command_name, strerror(errno));
@@ -296,12 +296,12 @@ int main(int argc, char** argv) {
     return 1;
   }
   
-  fprintf(stderr, "\rScanned %u files\n\n", stat_total_files);
+  fprintf(stdout, "\rScanned %u files\n\n", stat_total_files);
   
-  fprintf(stderr, "     Unmodified tracks: %u\n", stat_unmodified_tracks);
-  fprintf(stderr, "New or modified tracks: %u\n", stat_new_or_modified_tracks);
-  fprintf(stderr, "           Other files: %u\n", stat_other_files);
-  fprintf(stderr, "                Errors: %u\n", stat_errors);
+  fprintf(stdout, "     Unmodified tracks: %u\n", stat_unmodified_tracks);
+  fprintf(stdout, "New or modified tracks: %u\n", stat_new_or_modified_tracks);
+  fprintf(stdout, "           Other files: %u\n", stat_other_files);
+  fprintf(stdout, "                Errors: %u\n", stat_errors);
   
   // Doesn't work when creating it for the first time
   database_file = freopen(NULL, "wb", database_file);
