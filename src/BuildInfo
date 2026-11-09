@@ -1,3 +1,4 @@
+IncludeBuildInfo src/despot-scan
 IncludeBuildInfo src/despot-metadata
 IncludeBuildInfo src/io-test
 IncludeBuildInfo src/libdespot

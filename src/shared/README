@@ -1,0 +1,1 @@
+This directory contains both shared code (io abstraction) and 3rd party code (stb_ds and md5)

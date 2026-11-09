@@ -91,6 +91,6 @@ echo "build install: phony$install_files" >> build.ninja
 if [ ! -f .clangd ]; then
 cat << EOF > .clangd
 CompileFlags:
-  Add: [ -xc, -I$(realpath include), -I$(realpath src) ]
+  Add: [ -xc, -D_XOPEN_SOURCE=700, -D_DEFAULT_SOURCE, -I$(realpath include), -I$(realpath src) ]
 EOF
 fi

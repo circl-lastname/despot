@@ -57,6 +57,9 @@ despot_result_t flac_picture_parse(despot_ctx_t* ctx, io_t* io) {
     cleanup(&picture);
   );
   
+  // TODO: Danger! This trusts that the picture file size does not exceed the actual metadata block size!
+  // At most, a malicious file can make an application allocate an unnecessary amount of memory, then fail when it hits EOF
+  // TODO: But that is true for strings as well! Make a malloc_max function
   uint32_t size;
   TRY(io_read_u32_be(io, &size)) CATCH (
     cleanup(&picture);

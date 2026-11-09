@@ -1,0 +1,11 @@
+BuildRule despot-scan "-D_XOPEN_SOURCE=700 -D_DEFAULT_SOURCE" ""
+
+BuildWithDependency bin despot-scan lib/libdespot.so "
+despot-scan/database.c
+despot-scan/main.c
+shared/io.c
+shared/stb_ds.c
+"
+
+AddDefaultTarget bin/despot-scan
+Install bin despot-scan

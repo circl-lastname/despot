@@ -12,7 +12,7 @@ despot_result_t main2() {
     if (!file)
       return DESPOT_RESULT_SEE_ERRNO;
     io_t io;
-    MUST(io_init(&io, file));
+    io.file = file;
     
     puts("Writing values...");
     
@@ -33,7 +33,7 @@ despot_result_t main2() {
     if (!file)
       return DESPOT_RESULT_SEE_ERRNO;
     io_t io;
-    MUST(io_init(&io, file));
+    MUST(io_init_for_reading(&io, file));
     
     puts("Reading values...");
     

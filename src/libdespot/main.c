@@ -60,7 +60,7 @@ static despot_result_t parse(despot_ctx_t* ctx, io_t* io) {
 EXPORT despot_result_t despot_read_from_file(despot_ctx_t** ctx, FILE* file) {
   *ctx = calloc(1, sizeof(despot_ctx_t));
   
-  MUST(io_init(&(*ctx)->io, file));
+  MUST(io_init_for_reading(&(*ctx)->io, file));
   
   return parse(*ctx, &(*ctx)->io);
 }
@@ -189,6 +189,7 @@ EXPORT void despot_free_ctx(despot_ctx_t* ctx) {
   
   size_t metadata_keys = shlenu(ctx->metadata);
   for (size_t i = 0; i < metadata_keys; i++) {
+    // There's only one allocation per tag, containing both the key and value
     free(ctx->metadata[i].key);
   }
   

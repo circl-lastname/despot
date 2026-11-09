@@ -6,7 +6,7 @@
 
 #include "io.h"
 
-despot_result_t io_init(io_t* io, FILE* file) {
+despot_result_t io_init_for_reading(io_t* io, FILE* file) {
   io->file = file;
   
   if (fseek(file, 0, SEEK_END) < 0) {
